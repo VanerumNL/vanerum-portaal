@@ -24,4 +24,4 @@ Er staan **geen geheimen** in deze repo. In Cloudflare bij deze Worker:
    zet in zijn `wrangler.jsonc`: `"services": [{ "binding": "PORTAAL", "service": "vanerum-portaal" }]`.
 3. Koppel het adres als custom domain aan die Worker.
 
-Aangekoppeld: kaartenmaker (proefplaatsing), prijslijsten (offertes), schermen-showroom (schermen).
+Aangekoppeld: kaartenmaker (proefplaatsing), prijslijsten (offertes), schermen-showroom (schermen), klaslokaallab (klaslokaal).

@@ -23,9 +23,9 @@ const ACCOUNT = "https://" + ACCOUNT_HOST;
 const STANDAARD_SITES = [
   { id: "proefplaatsing", naam: "Kaartenmaker proefplaatsing", url: "https://proefplaatsing." + DOMEIN, openbaar: false },
   { id: "offertes", naam: "Offertes en prijslijsten", url: "https://offertes." + DOMEIN, openbaar: false },
-  { id: "schermen", naam: "Schermen (tv's en touchscreens)", url: "https://schermen." + DOMEIN, openbaar: false },
+  { id: "schermen", naam: "Schermen (tv's en touchscreens)", url: "https://schermen." + DOMEIN, openbaar: false },  { id: "klaslokaal", naam: "Klaslokaal Lab", url: "https://klaslokaal." + DOMEIN, openbaar: false },
 ];
-const VAST = ["proefplaatsing", "offertes", "schermen"]; // niet te verwijderen
+const VAST = ["proefplaatsing", "offertes", "schermen", "klaslokaal"]; // niet te verwijderen
 
 const COOKIE = "vn_sessie";
 const DAGEN = 30;
