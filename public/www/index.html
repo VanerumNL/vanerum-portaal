@@ -71,12 +71,22 @@ h1 .geel{color:var(--vr-geel);display:block}
 .links{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
 .links a{color:#6b6b68}.links a:hover{color:var(--vr-zwart)}
 
-/* ---------- Vimo ---------- */
-.podium{position:relative;aspect-ratio:1000/880;max-width:min(640px,80vh);justify-self:center;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.podium::after{content:"";position:absolute;left:8%;right:8%;bottom:4.5%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),rgba(0,0,0,0));z-index:0}
-.podium svg{position:relative;z-index:1;width:100%;height:100%;overflow:visible}
-.podium .tip{position:absolute;right:4%;bottom:-6px;font-size:13px;color:rgba(255,255,255,.55);z-index:2}
-
+/* ---------- het groepje ---------- */
+.podium{position:relative;max-width:min(660px,78vh);justify-self:center;width:100%;-webkit-tap-highlight-color:transparent}
+.podium::after{content:"";position:absolute;left:4%;right:4%;bottom:1%;height:8%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.6),rgba(0,0,0,0));z-index:0}
+.podium svg{position:relative;z-index:1;width:100%;height:auto;display:block;overflow:visible}
+.fig{transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
+.gezicht{transition:transform .25s ease-out}
+.pup{transition:transform .12s ease-out,opacity .05s}
+.wrap{cursor:pointer}
+.hup{animation:hup .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes hup{0%{transform:translateY(0)}35%{transform:translateY(-34px)}70%{transform:translateY(0)}85%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+.ww-veld{position:relative}
+.ww-veld input{padding-right:48px}
+.oog{position:absolute;right:6px;bottom:6px;width:38px;height:36px;border:0;border-radius:9px;background:transparent;color:#6b6b68;cursor:pointer;display:grid;place-items:center}
+.oog:hover{background:#ebe9e3;color:var(--vr-zwart)}
+.oog svg{width:20px;height:20px}
+.oog .streep{display:none}.oog[aria-pressed="true"] .streep{display:inline}
 /* ---------- voet ---------- */
 footer{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 22px;border-top:1px solid rgba(255,255,255,.1);font-size:13px;color:rgba(255,255,255,.55)}
 footer img{height:14px;width:auto}
@@ -86,10 +96,9 @@ footer .adres{margin-left:auto}
 /* ---------- smal ---------- */
 @media (max-width:960px){
   .held-grid{grid-template-columns:1fr;gap:12px;padding-top:8px}
-  .podium{order:-1;max-width:270px;margin:-10px auto -14px}
+  .podium{order:-1;max-width:330px;margin:-6px auto -4px}
   .label{display:none}
   h1{margin-bottom:20px}
-  .podium .tip{display:none}
 }
 @media (max-width:520px){
   .balk{gap:14px}.balk .logo{height:17px}.balk .str{height:15px}
@@ -122,7 +131,8 @@ footer .adres{margin-left:auto}
           <h2>Inloggen</h2>
           <p class="sub">Met je Vanerum-mailadres en je wachtwoord.</p>
           <div class="veld"><label for="email">E-mailadres</label><input id="email" type="email" autocomplete="username" required></div>
-          <div class="veld"><label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required></div>
+          <div class="veld ww-veld"><label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required>
+            <button type="button" class="oog" id="oog" aria-label="Wachtwoord tonen" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="streep" d="M4 4l16 16"/></svg></button></div>
           <button class="knop" id="knop">Inloggen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           <div class="fout" id="fout" role="alert"></div>
         </form>
@@ -136,9 +146,8 @@ footer .adres{margin-left:auto}
         </div>
       </div>
 
-      <div class="podium" id="podium" title="Tik op Vimo">
-        <svg id="vimo" role="img" aria-label="Vimo, de mascotte van Vanerum, naast een Motion Cube"></svg>
-        <div class="tip">Tik op Vimo</div>
+      <div class="podium" id="podium">
+        <svg id="groep" viewBox="20 150 670 345" role="img" aria-label="Vimo en zijn vrienden: een kast, een zitting en een Motion Cube. Ze kijken mee terwijl je inlogt."></svg>
       </div>
     </div>
 
@@ -152,7 +161,6 @@ footer .adres{margin-left:auto}
 
 
 
-<script src="/www/vimo2d.js"></script>
 <script>
 (() => {
   const $ = id => document.getElementById(id);
@@ -161,33 +169,171 @@ footer .adres{margin-left:auto}
   const ICOON = { offertes: "icoon-offertes.png", proefplaatsing: "icoon-kaartenmaker.png", schermen: "icoon-schermen.png" };
 
 
-  /* ---------- Vimo ---------- */
-  let vimo = null, wachtrij = null;
-  const zinnen = {
-    hoi: "Hoi! Ik ben Vimo!",
-    wijzen: "Log in, dan zet ik alles klaar",
-    kubus: "Altijd in beweging!",
-    springen: "Tik maar op mij!",
-    balans: "Vanerum In MOtion",
-    knieen: "Bewegend leren, zo doe je dat",
-    draaien: "Joehoe!",
-  };
-  const rondje = ["hoi", "wijzen", "kubus", "springen", "balans", "knieen", "draaien"];
-  let r = 0;
-  function verder(ms) { clearTimeout(wachtrij); wachtrij = setTimeout(stap, ms); }
-  function stap() {
-    const m = rondje[r++ % rondje.length];
-    vimo.sequence([{ move: m, text: zinnen[m] }], () => verder(2600));
+  /* ---------- het groepje: Vimo, een kast, een zitting en een Motion Cube die meekijken ---------- */
+  const NS = "http://www.w3.org/2000/svg", INK = "#1e1e1e";
+  const el = (t, a, p) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const svg = $("groep");
+  const figuren = [];
+  function figuur(naam, onder) {
+    const wrap = el("g", { class: "wrap" }, svg);           // springen
+    const g = el("g", { class: "fig" }, wrap);              // leunen
+    g.style.transformOrigin = onder;
+    const f = { naam, wrap, g, ogen: [], mond: null };
+    figuren.push(f);
+    return f;
   }
-  function zeg(move, text, daarna = 3200) { if (!vimo) return; clearTimeout(wachtrij); vimo.sequence([{ move, text }], () => verder(daarna)); }
-  if (window.Vimo2D) {
-    vimo = new Vimo2D.Player($("vimo"), { width: 1000, height: 880, home: { x: 330, g: 812 }, scale: 1.6, cube: { cx: 790, ground: 812, s: 210 }, fontSize: 40 });
-    verder(700);
-    $("podium").addEventListener("click", () => {
-      const m = vimo.moves.filter(x => x !== "hoi")[Math.floor(Math.random() * (vimo.moves.length - 1))] || "springen";
-      zeg(m, ["Hihi!", "Nog een keer?", "Kijk mij!", "Wiehoe!"][Math.floor(Math.random() * 4)]);
+  function gezicht(f, { ogen, rx, ry, mond, mw, wangen }) {
+    f.face = el("g", { class: "gezicht" }, f.g);
+    if (wangen) wangen.forEach(([x, y]) => el("ellipse", { cx: x, cy: y, rx: 8, ry: 4.5, fill: "#f2a6b8", opacity: .8 }, f.face));
+    f.ogen = ogen.map(([cx, cy]) => {
+      const o = { cx, cy, rx, ry };
+      o.wit = el("ellipse", { cx, cy, rx, ry, fill: "#fff", stroke: INK, "stroke-width": 3 }, f.face);
+      o.pup = el("ellipse", { cx, cy, rx: rx * .55, ry: ry * .6, fill: INK, class: "pup" }, f.face);
+      o.dicht = el("path", { d: `M${cx - rx} ${cy + 1} Q${cx} ${cy - ry * 1.05} ${cx + rx} ${cy + 1}`, fill: "none", stroke: INK, "stroke-width": 4, "stroke-linecap": "round", style: "display:none" }, f.face);
+      return o;
+    });
+    f.m = { x: mond[0], y: mond[1], w: mw };
+    f.mond = el("path", { fill: "none", stroke: INK, "stroke-width": 3.5, "stroke-linecap": "round", "stroke-linejoin": "round" }, f.face);
+  }
+
+  // lila kast
+  const kast = figuur("kast", "125px 470px");
+  el("rect", { x: 40, y: 168, width: 170, height: 302, rx: 20, fill: "#bda8bd", stroke: INK, "stroke-width": 3 }, kast.g);
+  el("line", { x1: 125, y1: 300, x2: 125, y2: 456, stroke: INK, "stroke-width": 3, opacity: .35 }, kast.g);
+  el("rect", { x: 108, y: 360, width: 6, height: 26, rx: 3, fill: INK, opacity: .5 }, kast.g);
+  el("rect", { x: 136, y: 360, width: 6, height: 26, rx: 3, fill: INK, opacity: .5 }, kast.g);
+  gezicht(kast, { ogen: [[100, 228], [150, 228]], rx: 12, ry: 15, mond: [125, 268], mw: 14 });
+
+  // Vimo (zelfde V als in het logo en in vimo2d)
+  const vimo = figuur("vimo", "350px 470px");
+  const vb = el("g", { transform: "translate(350 410) scale(1.22)" }, vimo.g);
+  el("path", { d: "M-10 -2 L-14 46", stroke: INK, "stroke-width": 9, "stroke-linecap": "round" }, vb);
+  el("path", { d: "M10 -2 L14 46", stroke: INK, "stroke-width": 9, "stroke-linecap": "round" }, vb);
+  el("path", { d: "M-10 -2 L-14 46", stroke: "#fff", "stroke-width": 4.5, "stroke-linecap": "round" }, vb);
+  el("path", { d: "M10 -2 L14 46", stroke: "#fff", "stroke-width": 4.5, "stroke-linecap": "round" }, vb);
+  el("ellipse", { cx: -20, cy: 48, rx: 15, ry: 8, fill: "#fff", stroke: INK, "stroke-width": 3 }, vb);
+  el("ellipse", { cx: 20, cy: 48, rx: 15, ry: 8, fill: "#fff", stroke: INK, "stroke-width": 3 }, vb);
+  el("path", { d: "M-124 -175 L-83 -175 L0.8 -3.3 L36 0 L-36 0 Z", fill: "#fbb900" }, vb);
+  el("path", { d: "M83 -175 L124 -175 L36 0 L0.8 -3.3 Z", fill: "#2e3033" }, vb);
+  gezicht(vimo, { ogen: [[350 - 42.6 * 1.22, 410 - 54 * 1.22], [350 + 42.6 * 1.22, 410 - 54 * 1.22]], rx: 14, ry: 18, mond: [350, 410 - 14 * 1.22], mw: 15,
+    wangen: [[350 - 31 * 1.22, 410 - 27 * 1.22], [350 + 31 * 1.22, 410 - 27 * 1.22]] });
+
+  // lichtblauwe zitting
+  const zit = figuur("zitting", "200px 470px");
+  el("path", { d: "M70 470 A130 118 0 0 1 330 470 Z", fill: "#b8e7f9", stroke: INK, "stroke-width": 3, "stroke-linejoin": "round" }, zit.g);
+  gezicht(zit, { ogen: [[175, 405], [225, 405]], rx: 11, ry: 13, mond: [200, 437], mw: 13, wangen: [[157, 428], [243, 428]] });
+
+  // Motion Cube
+  const kub = figuur("kubus", "585px 470px");
+  el("path", { d: "M512 336 L548 312 L668 312 L632 336 Z", fill: "#3a3b3f", stroke: INK, "stroke-width": 3, "stroke-linejoin": "round" }, kub.g);
+  el("path", { d: "M632 336 L668 312 L668 448 L632 470 Z", fill: "#25262a", stroke: INK, "stroke-width": 3, "stroke-linejoin": "round" }, kub.g);
+  el("rect", { x: 512, y: 336, width: 120, height: 134, rx: 6, fill: "#2f3033", stroke: INK, "stroke-width": 3 }, kub.g);
+  [[548, 324], [632, 324]].forEach(([x, y]) => el("ellipse", { cx: x, cy: y, rx: 9, ry: 4, fill: "#fbb900" }, kub.g));
+  el("ellipse", { cx: 650, cy: 392, rx: 4, ry: 10, fill: "#b8e7f9" }, kub.g);
+  gezicht(kub, { ogen: [[552, 384], [592, 384]], rx: 11, ry: 14, mond: [572, 425], mw: 12 });
+
+  /* ---------- kijken, knipperen, stemmingen ---------- */
+  let stemming = "rust", doel = null, weg = 1;
+  const MOND = {
+    lach: (x, y, w) => `M${x - w} ${y - 3} Q${x} ${y + w * .9} ${x + w} ${y - 3}`,
+    grijns: (x, y, w) => `M${x - w * 1.1} ${y - 4} Q${x} ${y + w * 1.3} ${x + w * 1.1} ${y - 4} Z`,
+    recht: (x, y, w) => `M${x - w * .65} ${y} L${x + w * .65} ${y}`,
+    sip: (x, y, w) => `M${x - w} ${y + 6} Q${x} ${y - w * .7} ${x + w} ${y + 6}`,
+    o: (x, y, w) => `M${x} ${y - 7} a6 8 0 1 0 0.1 0 Z`,
+    scheef: (x, y, w) => `M${x - w} ${y + 2} Q${x} ${y + 6} ${x + w} ${y - 6}`,
+  };
+  function mond(f, soort) { f.mond.setAttribute("d", MOND[soort](f.m.x, f.m.y, f.m.w)); f.mond.setAttribute("fill", soort === "grijns" || soort === "o" ? INK : "none"); }
+  function ogen(f, open, kijk = [0, 0], dicht = false) {
+    f.ogen.forEach((o, i) => {
+      const op = Array.isArray(open) ? open[i] : open, dt = Array.isArray(dicht) ? dicht[i] : dicht;
+      o.wit.style.display = o.pup.style.display = dt ? "none" : "";
+      o.dicht.style.display = dt ? "" : "none";
+      o.wit.setAttribute("ry", (o.ry * op).toFixed(1));
+      o.pup.setAttribute("ry", (o.ry * .6 * Math.min(1, op * 1.3)).toFixed(1));
+      const mx = o.rx - o.rx * .55 - 1.5, my = Math.max(0, o.ry * op - o.ry * .6 - 1.5);
+      o.pup.style.transform = `translate(${(kijk[0] * mx).toFixed(1)}px,${(kijk[1] * my).toFixed(1)}px)`;
     });
   }
+  function leun(f, hoek, dx = 0, dy = 0) { f.g.style.transform = `rotate(${hoek}deg)`; f.face.style.transform = `translate(${dx}px,${dy}px)`; }
+  // punt op het scherm -> kijkrichting per figuur
+  function richting(f, px, py) {
+    const m = svg.getScreenCTM(); if (!m) return [0, 0];
+    const o = f.ogen[0], p = new DOMPoint(px, py).matrixTransform(m.inverse());
+    const cx = (f.ogen[0].cx + f.ogen[1].cx) / 2, cy = o.cy;
+    const dx = p.x - cx, dy = p.y - cy, d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 160);
+    return [dx / d * k, dy / d * k];
+  }
+  function kijkNaar(px, py) {
+    figuren.forEach(f => {
+      const [x, y] = richting(f, px, py);
+      ogen(f, 1, [x, y]); leun(f, x * 3.5, x * 5, y * 3);
+    });
+  }
+  // welke kant is "weg van het inlogvak"?
+  function wegKant() { const a = svg.getBoundingClientRect(), b = $("inlog").getBoundingClientRect(); weg = a.left + a.width / 2 >= b.left + b.width / 2 ? 1 : -1; }
+
+  function zet(s) {
+    stemming = s; svg.dataset.stemming = s; wegKant();
+    if (s === "rust" || s === "email") {
+      figuren.forEach(f => mond(f, f === vimo ? "lach" : f === kub ? "lach" : "recht"));
+      if (doel) kijkNaar(doel[0], doel[1]); else figuren.forEach(f => { ogen(f, 1); leun(f, 0); });
+    } else if (s === "weg") {           // wachtwoord typen: niet kijken!
+      ogen(vimo, 1, [0, 0], true); mond(vimo, "lach"); leun(vimo, weg * 5, weg * 6, -3);
+      ogen(kub, 1, [0, 0], true); mond(kub, "lach"); leun(kub, weg * 4, weg * 5, -2);
+      ogen(kast, 1, [weg, -.7]); mond(kast, "recht"); leun(kast, weg * 6, weg * 9, -4);
+      ogen(zit, 1, [weg, -.8]); mond(zit, "recht"); leun(zit, weg * 4, weg * 9, -3);
+    } else if (s === "gluur") {         // wachtwoord zichtbaar: stiekem kijken
+      ogen(kast, .45, [-weg, .5]); mond(kast, "scheef"); leun(kast, -weg * 6, -weg * 8, 2);
+      ogen(zit, .45, [-weg, .3]); mond(zit, "scheef"); leun(zit, -weg * 3, -weg * 8, 2);
+      ogen(vimo, 1.15, [-weg, 0]); mond(vimo, "o"); leun(vimo, -weg * 3, -weg * 6, 0);
+      ogen(kub, [1, 1], [-weg, 0], [false, true]); mond(kub, "grijns"); leun(kub, -weg * 3, -weg * 4, 0);
+    } else if (s === "sip") {
+      figuren.forEach(f => { ogen(f, .8, [0, 1]); mond(f, "sip"); leun(f, 0, 0, 5); });
+    } else if (s === "blij") {
+      figuren.forEach((f, i) => { ogen(f, 1, [0, 0], true); mond(f, "grijns"); leun(f, 0, 0, -2); hup(f, i * 90); });
+    }
+  }
+  function hup(f, wacht = 0) { setTimeout(() => { f.wrap.classList.remove("hup"); void f.wrap.getBBox(); f.wrap.classList.add("hup"); }, wacht); }
+  figuren.forEach(f => f.wrap.addEventListener("click", () => { hup(f); if (stemming === "rust") { mond(f, "grijns"); setTimeout(() => zet(stemming), 900); } }));
+
+  // knipperen af en toe
+  (function knipper() {
+    setTimeout(() => {
+      if (stemming === "rust" || stemming === "email") {
+        const f = figuren[Math.floor(Math.random() * figuren.length)], ook = Math.random() < .4 ? figuren : [f];
+        ook.forEach(x => x.ogen.forEach(o => o.wit.setAttribute("ry", 1.5)));
+        ook.forEach(x => x.ogen.forEach(o => o.pup.style.opacity = 0));
+        setTimeout(() => { ook.forEach(x => x.ogen.forEach(o => { o.pup.style.opacity = ""; })); zet(stemming); }, 130);
+      }
+      knipper();
+    }, 1800 + Math.random() * 3200);
+  })();
+
+  // muis en vingers volgen
+  addEventListener("pointermove", e => { if (stemming === "rust") { doel = [e.clientX, e.clientY]; kijkNaar(e.clientX, e.clientY); } }, { passive: true });
+
+  // waar staat de cursor in het e-mailveld?
+  const meet = document.createElement("canvas").getContext("2d");
+  function cursorPunt(inp) {
+    const r = inp.getBoundingClientRect(), cs = getComputedStyle(inp);
+    meet.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+    const tekst = inp.value.slice(0, inp.selectionStart ?? inp.value.length);
+    const x = r.left + parseFloat(cs.paddingLeft) + Math.min(meet.measureText(tekst).width + tekst.length * .5, r.width - 30);
+    return [x, r.top + r.height / 2];
+  }
+  function volgEmail() { doel = cursorPunt($("email")); zet("email"); }
+  ["focus", "input", "click", "keyup"].forEach(t => $("email").addEventListener(t, volgEmail));
+  $("email").addEventListener("blur", () => { doel = null; zet("rust"); });
+  function wwStemming() { zet($("ww").type === "text" && $("ww").value ? "gluur" : "weg"); }
+  ["focus", "input"].forEach(t => $("ww").addEventListener(t, wwStemming));
+  $("ww").addEventListener("blur", () => setTimeout(() => { if (document.activeElement !== $("ww") && document.activeElement !== $("oog")) { doel = null; zet("rust"); } }, 0));
+  $("oog").addEventListener("click", () => {
+    const zien = $("ww").type === "password"; $("ww").type = zien ? "text" : "password";
+    $("oog").setAttribute("aria-pressed", zien); $("oog").setAttribute("aria-label", zien ? "Wachtwoord verbergen" : "Wachtwoord tonen");
+    $("ww").focus(); wwStemming();
+  });
+  addEventListener("resize", wegKant);
+  zet("rust");
 
   /* ---------- inloggen ---------- */
   async function laad() {
@@ -213,9 +359,9 @@ footer .adres{margin-left:auto}
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.fout || "Inloggen lukt niet");
       const naam = await laad();
-      if (naam) zeg("springen", "Welkom, " + naam + "!", 4000);
+      if (naam) { zet("blij"); setTimeout(() => zet("rust"), 1600); }
     } catch (x) {
-      $("fout").textContent = x.message; zeg("draaien", "Oeps, probeer het nog eens");
+      $("fout").textContent = x.message; zet("sip"); setTimeout(() => { if (stemming === "sip") zet(document.activeElement === $("ww") ? "weg" : "rust"); }, 2600);
     }
     $("knop").disabled = false;
   });
