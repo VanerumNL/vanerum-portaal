@@ -36,10 +36,8 @@ body{background:var(--vr-zwart)}
 .balk .rechts{margin-left:auto;display:flex;gap:22px;align-items:center;font-size:15px}
 .balk .rechts a{text-decoration:none;opacity:.75;white-space:nowrap}.balk .rechts a:hover{opacity:1}
 
-.held-grid{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center;padding:8px 0 32px;position:relative}
-.label{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.7);margin-bottom:18px}
-.label i{width:8px;height:8px;border-radius:50%;background:var(--vr-groen);box-shadow:0 0 0 4px rgba(168,203,103,.18)}
-h1{font-size:clamp(38px,4.4vw,64px);line-height:1;font-weight:700;margin:0 0 28px;letter-spacing:.005em}
+.held-grid{flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:48px;align-items:start;padding:clamp(4px,3vh,40px) 0 24px;position:relative}
+h1{font-size:clamp(34px,min(4.4vw,7.4vh),64px);line-height:1;font-weight:700;margin:0 0 clamp(14px,2.6vh,28px);letter-spacing:.005em}
 h1 .geel{color:var(--vr-geel);display:block}
 
 /* ---------- inlogkaart ---------- */
@@ -72,7 +70,7 @@ h1 .geel{color:var(--vr-geel);display:block}
 .links a{color:#6b6b68}.links a:hover{color:var(--vr-zwart)}
 
 /* ---------- Vimo ---------- */
-.podium{position:relative;max-width:min(500px,72vh);justify-self:center;width:100%;-webkit-tap-highlight-color:transparent}
+.podium{position:relative;max-width:min(600px,78vh);justify-self:center;align-self:center;width:100%;-webkit-tap-highlight-color:transparent}
 .podium::after{content:"";position:absolute;left:18%;right:18%;bottom:1%;height:7%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.6),rgba(0,0,0,0));z-index:0}
 .podium svg{position:relative;z-index:1;width:100%;height:auto;display:block;overflow:visible}
 .fig{transition:transform .45s cubic-bezier(.3,1.5,.5,1)}
@@ -96,16 +94,32 @@ footer a{color:#fff;text-decoration:none;font-weight:700}
 footer .adres{margin-left:auto}
 
 /* ---------- smal ---------- */
-@media (max-width:960px){
-  .held-grid{grid-template-columns:1fr;gap:12px;padding-top:8px}
-  .podium{order:-1;max-width:250px;margin:-10px auto -6px}
-  .label{display:none}
+@media (max-width:700px){
+  /* telefoon en tablet: kop links, Vimo rechts ernaast, inlogvak eronder */
+  .held-grid{grid-template-columns:minmax(0,1fr) minmax(120px,38%);grid-template-areas:"kop vimo" "kaart kaart";gap:0 8px;align-items:end;padding-top:0}
+  .held-grid>div:first-child{display:contents}
+  h1{grid-area:kop;align-self:center;font-size:clamp(30px,8vw,52px)}
+  .kaart{grid-area:kaart;max-width:none}
+  .podium{grid-area:vimo;max-width:none;margin:0 0 4px}
   h1{margin-bottom:20px}
 }
 @media (max-width:520px){
-  .balk{gap:14px}.balk .logo{height:17px}.balk .str{height:15px}
+  .balk{gap:14px;padding:14px 0}.balk .logo{height:17px}.balk .str{height:15px}
   .kaart{padding:22px}
   footer .adres{margin-left:0}
+}
+@media (max-height:760px){
+  .balk{padding:16px 0}
+  .kaart{padding:22px 24px}
+  .kaart .sub{margin-bottom:12px}
+  .veld{margin-bottom:9px}
+  .veld input{padding:11px 13px}
+  .knop{padding:13px 18px}
+}
+@media (max-height:600px){
+  .kaart{padding:18px 20px}
+  .kaart .sub{display:none}
+  .kaart h2{margin-bottom:10px}
 }
 @media (prefers-reduced-motion:reduce){.tegel:hover{transform:none}}
 [hidden]{display:none!important}
@@ -125,7 +139,6 @@ footer .adres{margin-left:auto}
 
     <div class="held-grid">
       <div>
-        <div class="label"><i></i>Werkplek Vanerum Nederland</div>
         <h1>Eén inlog.<span class="geel">Al je tools.</span></h1>
 
         <!-- niet ingelogd -->
@@ -236,14 +249,17 @@ footer .adres{margin-left:auto}
   let ballonTimer = null;
   function zeg(tekst, ms = 3200) {
     clearTimeout(ballonTimer);
+    // op een klein scherm grotere letters in de ballon, zodat hij leesbaar blijft
+    const schaal = (svg.getBoundingClientRect().width || 400) / 400, fs = Math.max(23, 14 / schaal), lh = fs * 1.26, max = Math.max(12, Math.round(26 * 23 / fs * 1.15));
+    bTekst.setAttribute("font-size", fs.toFixed(1));
     const regels = []; let r = "";
-    for (const w of tekst.split(" ")) { if ((r + " " + w).trim().length > 26) { regels.push(r.trim()); r = w; } else r += " " + w; }
+    for (const w of tekst.split(" ")) { if ((r + " " + w).trim().length > max) { regels.push(r.trim()); r = w; } else r += " " + w; }
     regels.push(r.trim());
     bTekst.textContent = "";
-    regels.forEach((t, i) => el("tspan", { x: X, dy: i ? 29 : 0 }, bTekst).textContent = t);
-    const bb = bTekst.getBBox(), w = Math.max(bb.width + 40, 120), h = regels.length * 29 + 24, top = 150 - h;
-    bTekst.setAttribute("y", top + 31);
-    [...bTekst.children].forEach((t, i) => { t.setAttribute("x", X); if (!i) t.setAttribute("y", top + 31); });
+    regels.forEach((t, i) => el("tspan", { x: X, dy: i ? lh : 0 }, bTekst).textContent = t);
+    const bb = bTekst.getBBox(), w = Math.max(bb.width + fs * 1.7, 120), h = regels.length * lh + fs * 1.05, top = 150 - h;
+    bTekst.setAttribute("y", top + fs * 1.35);
+    [...bTekst.children].forEach((t, i) => { t.setAttribute("x", X); if (!i) t.setAttribute("y", top + fs * 1.35); });
     bRect.setAttribute("x", X - w / 2); bRect.setAttribute("y", top); bRect.setAttribute("width", w); bRect.setAttribute("height", h);
     bStaart.setAttribute("d", `M${X - 12} ${top + h - 1.5} L${X} ${top + h + 16} L${X + 12} ${top + h - 1.5}`);
     ballon.classList.add("zicht");
