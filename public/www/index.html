@@ -196,6 +196,35 @@ footer .adres{margin-left:auto}
       dicht: el("path", { d: `M${cx - rx} ${cy + 2} Q${cx} ${cy - ry * 1.05} ${cx + rx} ${cy + 2}`, fill: "none", stroke: INK, "stroke-width": 4.5, "stroke-linecap": "round", style: "display:none" }, face) };
   });
   const M = { x: X, y: Y - 14 * S, w: 16 };
+  // armpjes, zoals in vimo2d: zwarte slang met witte binnenlijn en witte handschoentjes
+  const armG = el("g", { transform: `translate(${X} ${Y}) scale(${S})` }, lijf);
+  const slang = () => ({ u: el("path", { fill: "none", stroke: INK, "stroke-width": 9, "stroke-linecap": "round" }, armG), o: el("path", { fill: "none", stroke: "#fff", "stroke-width": 4.5, "stroke-linecap": "round" }, armG) });
+  const armL = slang(), armR = slang();
+  const handschoen = () => { const g = el("g", {}, armG); el("circle", { r: 10, fill: "#fff", stroke: INK, "stroke-width": 3 }, g); el("circle", { cx: -7, cy: -5, r: 4.5, fill: "#fff", stroke: INK, "stroke-width": 2.5 }, g); return g; };
+  const handL = handschoen(), handR = handschoen();
+  const RAD = Math.PI / 180, LA = 30, SCH = { L: [-64, -62], R: [64, -62] };
+  function ledemaat(root, a1, a2) {
+    const j = [root[0] + Math.sin(a1 * RAD) * LA, root[1] + Math.cos(a1 * RAD) * LA];
+    const e = [j[0] + Math.sin((a1 + a2) * RAD) * LA, j[1] + Math.cos((a1 + a2) * RAD) * LA];
+    return { e, d: `M${root[0]} ${root[1]} Q${(2 * j[0] - (root[0] + e[0]) / 2).toFixed(1)} ${(2 * j[1] - (root[1] + e[1]) / 2).toFixed(1)} ${e[0].toFixed(1)} ${e[1].toFixed(1)}` };
+  }
+  // hand naar een punt: hoeken voor schouder en elleboog (elleboog naar buiten)
+  function reik(kant, tx, ty) {
+    const [rx, ry] = SCH[kant], dx = tx - rx, dy = ty - ry, d = Math.min(Math.hypot(dx, dy), LA * 2 - .5) || 1;
+    const th = Math.atan2(dx, dy) / RAD, al = Math.acos(d / (2 * LA)) / RAD, s = kant === "L" ? 1 : -1;
+    return [th - s * al, s * 2 * al];
+  }
+  const arm = { L: [-22, 12], R: [22, -12] }, armDoel = { L: [-22, 12], R: [22, -12] };
+  function armen(l, r) { armDoel.L = l; armDoel.R = r; }
+  (function beweeg() {
+    for (const k of ["L", "R"]) for (const i of [0, 1]) arm[k][i] += (armDoel[k][i] - arm[k][i]) * .22;
+    const al = ledemaat(SCH.L, arm.L[0], arm.L[1]), ar = ledemaat(SCH.R, arm.R[0], arm.R[1]);
+    armL.u.setAttribute("d", al.d); armL.o.setAttribute("d", al.d); armR.u.setAttribute("d", ar.d); armR.o.setAttribute("d", ar.d);
+    handL.setAttribute("transform", `translate(${al.e[0].toFixed(1)} ${al.e[1].toFixed(1)})`);
+    handR.setAttribute("transform", `translate(${ar.e[0].toFixed(1)} ${ar.e[1].toFixed(1)}) scale(-1 1)`);
+    requestAnimationFrame(beweeg);
+  })();
+  const RUST = () => armen([-22 + Math.random() * 6, 12], [22 - Math.random() * 6, -12]);
   const mondRand = el("path", { fill: "none", stroke: "#fff", "stroke-width": 9, "stroke-linecap": "round", "stroke-linejoin": "round" }, face);
   const mondEl = el("path", { fill: "none", stroke: INK, "stroke-width": 4, "stroke-linecap": "round", "stroke-linejoin": "round" }, face);
 
@@ -254,11 +283,18 @@ footer .adres{margin-left:auto}
 
   function zet(s) {
     stemming = s; svg.dataset.stemming = s; wegKant();
-    if (s === "rust" || s === "email") { mond("lach"); if (doel) kijkNaar(doel[0], doel[1]); else { oog(1); leun(0); } }
-    else if (s === "dicht") { oog(1, [0, 0], true); mond("lach"); leun(weg * 4, weg * 5, -2); }            // wachtwoord typen: ogen dicht
-    else if (s === "gluur") { oog([.4, .4], [-weg, .4]); mond("scheef"); leun(-weg * 3, -weg * 7, 2); }  // wachtwoord zichtbaar: stiekem gluren
-    else if (s === "sip") { oog(.8, [0, 1]); mond("sip"); leun(0, 0, 6); }
-    else if (s === "blij") { oog(1, [0, 0], true); mond("grijns"); leun(0, 0, -2); hup(); setTimeout(hup, 620); }
+    if (s === "rust" || s === "email") {
+      mond("lach"); if (doel) kijkNaar(doel[0], doel[1]); else { oog(1); leun(0); }
+      if (s === "email" && doel) {                                   // wijst naar waar je typt
+        const [x, y] = richting(doel[0], doel[1]), k = x * weg < 0 ? "L" : "R", sh = SCH[k];
+        const n = Math.hypot(x, y) || 1, t = reik(k, sh[0] + x / n * 56, sh[1] + y / n * 56);
+        k === "L" ? armen(t, [-22, 12]) : armen([-22, 12], t);
+      } else RUST();
+    }
+    else if (s === "dicht") { oog(1, [0, 0], true); mond("lach"); leun(weg * 4, weg * 5, -2); armen(reik("L", -41, -57), reik("R", 41, -57)); }   // wachtwoord typen: handen voor de ogen
+    else if (s === "gluur") { oog([.4, .4], [-weg, .4]); mond("scheef"); leun(-weg * 3, -weg * 7, 2); armen(reik("L", -44, -30), reik("R", 44, -30)); }  // stiekem gluren over de handen
+    else if (s === "sip") { oog(.8, [0, 1]); mond("sip"); leun(0, 0, 6); armen([-6, 4], [6, -4]); }
+    else if (s === "blij") { oog(1, [0, 0], true); mond("grijns"); leun(0, 0, -2); armen(reik("L", -100, -120), reik("R", 100, -120)); hup(); setTimeout(hup, 620); }
   }
   function hup() { wrap.classList.remove("hup"); void wrap.getBBox(); wrap.classList.add("hup"); }
 
@@ -277,6 +313,11 @@ footer .adres{margin-left:auto}
   let g = Math.floor(Math.random() * grapjes.length);
   $("podium").addEventListener("click", e => {
     e.stopPropagation(); hup(); zeg(grapjes[g++ % grapjes.length]);
+    if (stemming === "rust" || stemming === "email") {
+      const z = [reik("R", 96, -118), [150, -10]];
+      armen([-22, 12], z[0]); setTimeout(() => armen([-22, 12], [150, 30]), 220); setTimeout(() => armen([-22, 12], z[0]), 440);
+      setTimeout(() => armen([-22, 12], [150, 30]), 660); setTimeout(() => zet(stemming), 1000);
+    }
     if (stemming === "rust" || stemming === "email") { mond("grijns"); setTimeout(() => zet(stemming), 900); }
   });
 
@@ -320,6 +361,7 @@ footer .adres{margin-left:auto}
     $("ww").focus(); wwStemming();
   });
   addEventListener("resize", wegKant);
+  setInterval(() => { if (stemming === "rust") RUST(); }, 1500);
   zet("rust");
   setTimeout(() => zeg("Hoi! Ik ben Vimo."), 600);
 
