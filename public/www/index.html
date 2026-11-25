@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vanerum Nederland · Al je tools, één inlog</title>
+<meta name="description" content="De werkplek van Vanerum Nederland: offertes en prijslijsten, kaarten voor proefplaatsingen en de schermen in de showroom, met één inlog.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#1e1e1e">
+<link rel="icon" href="/www/favicon.png">
+<link rel="preload" href="/fonts/NeueMontreal-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Neue Montreal";src:url(/fonts/NeueMontreal-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Neue Montreal";src:url(/fonts/NeueMontreal-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{
+  --vr-geel:#fbb900;--vr-zwart:#1e1e1e;--vr-wit:#fff;--vr-grijs:#f4f4f2;
+  --vr-blauw:#b8e7f9;--vr-lila:#bda8bd;--vr-groen:#a8cb67;
+  --font:"Neue Montreal",Arial,sans-serif;--rand:1.4rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);letter-spacing:.03em;color:var(--vr-zwart);background:var(--vr-wit);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{display:block}
+.wrap{width:min(1240px,100% - 48px);margin:0 auto}
+
+/* ---------- kop ---------- */
+.held{background:var(--vr-zwart);color:#fff;position:relative;overflow:hidden}
+.held::before{content:"";position:absolute;right:-12vw;top:-18vw;width:62vw;height:62vw;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(251,185,0,.16),rgba(251,185,0,0));pointer-events:none}
+.balk{display:flex;align-items:center;gap:22px;padding:26px 0}
+.balk .logo{height:22px;width:auto}
+.balk .str{height:20px;width:auto}
+.balk .rechts{margin-left:auto;display:flex;gap:22px;align-items:center;font-size:15px}
+.balk .rechts a{text-decoration:none;opacity:.75;white-space:nowrap}.balk .rechts a:hover{opacity:1}
+
+.held-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center;padding:36px 0 72px;position:relative}
+.label{display:inline-flex;align-items:center;gap:10px;font-size:14px;color:rgba(255,255,255,.7);margin-bottom:26px}
+.label i{width:8px;height:8px;border-radius:50%;background:var(--vr-groen);box-shadow:0 0 0 4px rgba(168,203,103,.18)}
+h1{font-size:clamp(44px,6.2vw,88px);line-height:.98;font-weight:700;margin:0 0 26px;letter-spacing:.005em}
+h1 .geel{color:var(--vr-geel);display:block}
+.lead{font-size:clamp(18px,1.6vw,22px);line-height:1.45;color:rgba(255,255,255,.78);max-width:34ch;margin:0 0 34px}
+
+/* ---------- inlogkaart ---------- */
+.kaart{background:#fff;color:var(--vr-zwart);border-radius:var(--rand);padding:28px;max-width:460px;box-shadow:0 30px 60px -30px rgba(0,0,0,.6)}
+.kaart h2{font-size:22px;margin:0 0 4px}
+.kaart .sub{font-size:14px;color:#6b6b68;margin:0 0 18px;line-height:1.4}
+.veld{margin-bottom:12px}
+.veld label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+.veld input{width:100%;font:inherit;font-size:16px;letter-spacing:.03em;padding:13px 14px;border:1.5px solid #e2e0da;border-radius:12px;background:var(--vr-grijs);outline:none;transition:border-color .15s,background .15s}
+.veld input:focus{border-color:var(--vr-zwart);background:#fff}
+.knop{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:6px;font:inherit;font-weight:700;font-size:16px;letter-spacing:.03em;
+  padding:15px 18px;border:0;border-radius:12px;background:var(--vr-geel);color:var(--vr-zwart);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.knop:hover{transform:translateY(-1px);box-shadow:0 8px 18px -8px rgba(251,185,0,.8)}
+.knop:active{transform:translateY(0)}
+.knop:disabled{opacity:.6;cursor:default;transform:none;box-shadow:none}
+.knop svg{width:18px;height:18px}
+.fout{color:#c0392b;font-size:14px;min-height:20px;margin-top:10px}
+.klein{font-size:13px;color:#6b6b68;margin:4px 0 0}
+
+/* ingelogd */
+.tegels{display:grid;gap:10px;margin:16px 0 14px}
+.tegel{display:flex;align-items:center;gap:14px;padding:12px;border-radius:14px;background:var(--vr-grijs);text-decoration:none;transition:background .15s,transform .15s}
+.tegel:hover{background:var(--vr-geel);transform:translateX(3px)}
+.tegel img{width:52px;height:52px;border-radius:12px}
+.tegel b{display:block;font-size:16px}
+.tegel span{font-size:13px;color:#6b6b68}
+.tegel:hover span{color:var(--vr-zwart)}
+.tegel .pijl{margin-left:auto;font-size:20px;padding-right:6px}
+.links{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:14px}
+.links a{color:#6b6b68}.links a:hover{color:var(--vr-zwart)}
+
+/* ---------- Vimo ---------- */
+.podium{position:relative;aspect-ratio:1000/880;max-width:620px;justify-self:center;width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.podium::after{content:"";position:absolute;left:8%;right:8%;bottom:4.5%;height:9%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),rgba(0,0,0,0));z-index:0}
+.podium svg{position:relative;z-index:1;width:100%;height:100%;overflow:visible}
+.podium .tip{position:absolute;right:4%;bottom:-6px;font-size:13px;color:rgba(255,255,255,.55);z-index:2}
+
+/* ---------- band ---------- */
+.band{background:var(--vr-geel);overflow:hidden;white-space:nowrap;border-top:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e}
+.band div{display:inline-flex;gap:46px;padding:18px 0;font-size:clamp(20px,2.2vw,30px);font-weight:700;animation:loop 38s linear infinite}
+.band span::after{content:"";display:inline-block;width:.42em;height:.42em;margin-left:46px;background:var(--vr-zwart);transform:skewX(-24deg) translateY(-.08em)}
+@keyframes loop{to{transform:translateX(-50%)}}
+
+/* ---------- tools ---------- */
+.sectie{padding:96px 0}
+.kopje{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:40px;flex-wrap:wrap}
+.kopje h2{font-size:clamp(32px,3.6vw,48px);line-height:1.08;margin:0;max-width:16ch}
+.kopje p{font-size:18px;line-height:1.5;color:#555;max-width:44ch;margin:0}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.tool{background:var(--vr-grijs);border-radius:var(--rand);padding:30px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:transform .2s}
+.tool:hover{transform:translateY(-4px)}
+.tool img{width:72px;height:72px;border-radius:16px}
+.tool h3{font-size:24px;line-height:1.2;margin:8px 0 0}
+.tool p{font-size:16px;line-height:1.5;color:#555;margin:0}
+.tool small{margin-top:auto;padding-top:10px;font-size:13px;color:#888}
+.tool::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--k)}
+
+/* ---------- Vimo voorstellen ---------- */
+.vimo{background:var(--vr-zwart);color:#fff;border-radius:calc(var(--rand) * 1.4);padding:64px 56px;display:grid;grid-template-columns:1fr 1.25fr;gap:48px;align-items:center}
+.vimo h2{font-size:clamp(32px,3.6vw,48px);line-height:1.08;margin:0 0 18px}
+.vimo h2 em{font-style:normal;color:var(--vr-geel)}
+.vimo p{font-size:18px;line-height:1.55;color:rgba(255,255,255,.75);margin:0 0 14px;max-width:42ch}
+.poses{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pose{background:#2a2a2a;border-radius:18px;padding:10px 6px 12px;text-align:center;transition:transform .2s,background .2s}
+.pose:hover{transform:translateY(-6px) rotate(-2deg);background:#333}
+.pose img{width:100%;aspect-ratio:1;filter:drop-shadow(0 10px 10px rgba(0,0,0,.35))}
+.pose span{font-size:13px;color:rgba(255,255,255,.65)}
+
+/* ---------- voet ---------- */
+footer{background:var(--vr-zwart);color:rgba(255,255,255,.7);padding:34px 0;font-size:14px;margin-top:96px}
+footer .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+footer img{height:16px;width:auto}
+footer a{color:#fff;text-decoration:none;font-weight:700}
+footer .adres{margin-left:auto}
+
+/* ---------- smal ---------- */
+@media (max-width:960px){
+  .held-grid{grid-template-columns:1fr;gap:12px;padding-top:8px}
+  .podium{order:-1;max-width:380px;margin-bottom:-10px}
+  .podium .tip{display:none}
+  .tools{grid-template-columns:1fr}
+  .vimo{grid-template-columns:1fr;padding:40px 24px}
+  .sectie{padding:64px 0}
+  .balk .rechts .vn{display:none}
+}
+@media (max-width:520px){
+  .balk{gap:14px}.balk .logo{height:17px}.balk .str{height:15px}
+  .poses{grid-template-columns:repeat(2,1fr)}
+  .kaart{padding:22px}
+  footer .adres{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){.band div{animation:none}.tool:hover,.pose:hover,.tegel:hover{transform:none}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="held">
+  <div class="wrap">
+    <nav class="balk">
+      <img class="logo" src="/www/logo-geel-wit.png" alt="Vanerum">
+      <img class="str" src="/www/streepjes.png" alt="">
+      <div class="rechts">
+        <a class="vn" href="#tools">Tools</a>
+        <a class="vn" href="#vimo">Vimo</a>
+        <a href="https://www.vanerum.nl" rel="noopener">vanerum.nl ↗</a>
+      </div>
+    </nav>
+
+    <div class="held-grid">
+      <div>
+        <div class="label"><i></i>Werkplek Vanerum Nederland</div>
+        <h1>Eén inlog.<span class="geel">Al je tools.</span></h1>
+        <p class="lead">Offertes en prijslijsten, kaarten voor proefplaatsingen en de schermen in de showroom. Log in en alles staat voor je klaar.</p>
+
+        <!-- niet ingelogd -->
+        <form class="kaart" id="inlog" hidden>
+          <h2>Inloggen</h2>
+          <p class="sub">Met je Vanerum-mailadres en je wachtwoord.</p>
+          <div class="veld"><label for="email">E-mailadres</label><input id="email" type="email" autocomplete="username" required></div>
+          <div class="veld"><label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required></div>
+          <button class="knop" id="knop">Inloggen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+          <div class="fout" id="fout" role="alert"></div>
+          <p class="klein">Wachtwoord vergeten of nog geen account? Vraag het Paul.</p>
+        </form>
+
+        <!-- ingelogd -->
+        <div class="kaart" id="binnen" hidden>
+          <h2 id="hallo">Hallo</h2>
+          <p class="sub">Hier kun je naartoe:</p>
+          <div class="tegels" id="tegels"></div>
+          <div class="links" id="links"></div>
+        </div>
+      </div>
+
+      <div class="podium" id="podium" title="Tik op Vimo">
+        <svg id="vimo" role="img" aria-label="Vimo, de mascotte van Vanerum, naast een Motion Cube"></svg>
+        <div class="tip">Tik op Vimo</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="band" aria-hidden="true"><div id="bandtekst"></div></div>
+
+<main>
+  <section class="sectie" id="tools">
+    <div class="wrap">
+      <div class="kopje">
+        <h2>Wat er voor je klaarstaat</h2>
+        <p>Wat je ziet, hangt af van je toegang. Mis je iets? Paul zet het voor je aan.</p>
+      </div>
+      <div class="tools">
+        <article class="tool" style="--k:var(--vr-geel)">
+          <img src="/www/icoon-offertes.png" alt="">
+          <h3>Offertes en prijslijsten</h3>
+          <p>Offertes maken, bewaren en als pdf versturen. Met alle prijzen, de staffels en de Mobiline-kasten.</p>
+          <small>offertes.vanerumnederland.nl</small>
+        </article>
+        <article class="tool" style="--k:var(--vr-blauw)">
+          <img src="/www/icoon-kaartenmaker.png" alt="">
+          <h3>Kaartenmaker proefplaatsing</h3>
+          <p>Overzichtskaarten voor een proefplaatsing op school, klaar om te printen op A4 of A5.</p>
+          <small>proefplaatsing.vanerumnederland.nl</small>
+        </article>
+        <article class="tool" style="--k:var(--vr-groen)">
+          <img src="/www/icoon-schermen.png" alt="">
+          <h3>Schermen</h3>
+          <p>De tv's en touchscreens in de showroom, op de NOT-stand en in Isselwaerde. Aanpassen kan op afstand.</p>
+          <small>schermen.vanerumnederland.nl</small>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="vimo">
+    <div class="wrap">
+      <div class="vimo">
+        <div>
+          <h2>Maak kennis met <em>Vimo</em></h2>
+          <p>Vimo staat voor Vanerum In MOtion. Hij is de V uit ons logo en het maatje van leerlingen bij bewegend leren.</p>
+          <p>Je komt hem tegen in Motion Missions, op de NOT-stand en op de schermen in de showroom. Altijd in beweging, meestal op een Motion Cube.</p>
+        </div>
+        <div class="poses" id="poses"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="/www/streepjes.png" alt="">
+    <a href="https://www.vanerum.nl" rel="noopener">vanerum.nl</a>
+    <span class="adres">Vanerum Nederland B.V. · Edisonweg 1A, 3404 LA IJsselstein</span>
+  </div>
+</footer>
+
+<script src="/www/vimo2d.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const ACCOUNT = "https://account.vanerumnederland.nl";
+  const ICOON = { offertes: "icoon-offertes.png", proefplaatsing: "icoon-kaartenmaker.png", schermen: "icoon-schermen.png" };
+
+  /* ---------- band ---------- */
+  const woorden = ["Bewegend leren", "Ergonomie", "Akoestiek", "Duurzaam en circulair", "Eigen fabriek", "De ideale leeromgeving"];
+  $("bandtekst").innerHTML = [...woorden, ...woorden].map(w => `<span>${w}</span>`).join("");
+
+  /* ---------- Vimo ---------- */
+  let vimo = null, wachtrij = null;
+  const zinnen = {
+    hoi: "Hoi! Ik ben Vimo!",
+    wijzen: "Log in, dan zet ik alles klaar",
+    kubus: "Altijd in beweging!",
+    springen: "Tik maar op mij!",
+    balans: "Vanerum In MOtion",
+    knieen: "Bewegend leren, zo doe je dat",
+    draaien: "Joehoe!",
+  };
+  const rondje = ["hoi", "wijzen", "kubus", "springen", "balans", "knieen", "draaien"];
+  let r = 0;
+  function verder(ms) { clearTimeout(wachtrij); wachtrij = setTimeout(stap, ms); }
+  function stap() {
+    const m = rondje[r++ % rondje.length];
+    vimo.sequence([{ move: m, text: zinnen[m] }], () => verder(2600));
+  }
+  function zeg(move, text, daarna = 3200) { if (!vimo) return; clearTimeout(wachtrij); vimo.sequence([{ move, text }], () => verder(daarna)); }
+  if (window.Vimo2D) {
+    vimo = new Vimo2D.Player($("vimo"), { width: 1000, height: 880, home: { x: 330, g: 812 }, scale: 1.6, cube: { cx: 790, ground: 812, s: 210 }, fontSize: 40 });
+    verder(700);
+    $("podium").addEventListener("click", () => {
+      const m = vimo.moves.filter(x => x !== "hoi")[Math.floor(Math.random() * (vimo.moves.length - 1))] || "springen";
+      zeg(m, ["Hihi!", "Nog een keer?", "Kijk mij!", "Wiehoe!"][Math.floor(Math.random() * 4)]);
+    });
+    const poses = [["staan-op", "Op de kubus"], ["boven-hoofd", "Kubus omhoog"], ["zitten-op", "Even zitten"], ["ernaast-staan", "Klaar voor de start"]];
+    $("poses").innerHTML = poses.map(([k, t]) => { const u = Vimo2D.poseURI(k); return u ? `<div class="pose"><img src="${u}" alt="Vimo: ${esc(t)}" loading="lazy"><span>${esc(t)}</span></div>` : ""; }).join("");
+  }
+
+  /* ---------- inloggen ---------- */
+  async function laad() {
+    let ik = null;
+    try { const r = await fetch("/api/ik", { cache: "no-store" }); if (r.ok) ik = await r.json(); } catch (e) {}
+    if (ik && ik.moetWijzigen) { location.href = ACCOUNT + "/wachtwoord?terug=" + encodeURIComponent(location.href); return; }
+    if (!ik) { $("inlog").hidden = false; $("binnen").hidden = true; return; }
+    const voornaam = String(ik.naam || "").split(" ")[0];
+    $("hallo").textContent = "Hallo " + voornaam;
+    $("tegels").innerHTML = (ik.sites || []).map(s => `<a class="tegel" href="${esc(s.url)}">
+        <img src="/www/${ICOON[s.id] || "favicon.png"}" alt="">
+        <div><b>${esc(s.naam)}</b><span>${esc(s.url.replace(/^https?:\/\//, ""))}</span></div><div class="pijl">→</div></a>`).join("")
+      || `<p class="sub">Je hebt nog nergens toegang toe. Vraag Paul om je toe te voegen.</p>`;
+    $("links").innerHTML = (ik.admin ? `<a href="${ACCOUNT}/beheer">Beheer</a>` : "") + `<a href="${ACCOUNT}/wachtwoord">Wachtwoord wijzigen</a><a href="/uitloggen">Uitloggen</a>`;
+    $("inlog").hidden = true; $("binnen").hidden = false;
+    return voornaam;
+  }
+
+  $("inlog").addEventListener("submit", async e => {
+    e.preventDefault(); $("knop").disabled = true; $("fout").textContent = "";
+    try {
+      const r = await fetch("/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value, wachtwoord: $("ww").value }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.fout || "Inloggen lukt niet");
+      const naam = await laad();
+      if (naam) zeg("springen", "Welkom, " + naam + "!", 4000);
+    } catch (x) {
+      $("fout").textContent = x.message; zeg("draaien", "Oeps, probeer het nog eens");
+    }
+    $("knop").disabled = false;
+  });
+
+  laad();
+})();
+</script>
+</body>
+</html>
