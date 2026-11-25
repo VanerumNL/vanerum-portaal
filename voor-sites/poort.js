@@ -62,7 +62,7 @@ export async function poort(request, siteId, env = {}) {
       `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Geen toegang</title>
 <body style="font-family:Arial,sans-serif;background:#e9e8e4;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0">
 <div style="background:#fff;border-top:6px solid #fbb900;padding:32px;max-width:400px"><h1 style="font-size:22px;margin:0 0 8px">Geen toegang</h1>
-<p style="color:#6b6b68">Je bent ingelogd, maar je hebt geen toegang tot deze site. Vraag Paul om je toegang te geven.</p>
+<p style="color:#6b6b68">Je bent ingelogd, maar je hebt geen toegang tot deze site.</p>
 <p><a href="${account}/" style="color:#1e1e1e;font-weight:700">Naar mijn sites</a></p></div></body>`,
       { status: 403, headers: { "content-type": "text/html; charset=utf-8" } }
     );

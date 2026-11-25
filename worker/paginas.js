@@ -71,7 +71,6 @@ const LOGIN = (d) => `<main><form class="kaart" id="f">
   <label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required>
   <button class="vol" id="knop">Inloggen</button>
   <div class="fout" id="fout"></div>
-  <p style="margin:14px 0 0;font-size:13px">Wachtwoord vergeten? Vraag Paul om een nieuw tijdelijk wachtwoord.</p>
 </form></main>
 <script>
 const terug=${JSON.stringify(d.terug || "")};
@@ -115,13 +114,13 @@ const SITES = (g) => `<main><div class="kaart midden">
 <script>
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 fetch("/api/ik").then(r=>r.json()).then(j=>{
-  tegels.innerHTML=(j.sites||[]).map(s=>'<a class="tegel" href="'+esc(s.url)+'"><b>'+esc(s.naam)+'</b><span>'+esc(s.url.replace(/^https?:\\/\\//,""))+'</span></a>').join("")||"<small>Je hebt nog nergens toegang toe. Vraag Paul om je toe te voegen.</small>";
+  tegels.innerHTML=(j.sites||[]).map(s=>'<a class="tegel" href="'+esc(s.url)+'"><b>'+esc(s.naam)+'</b><span>'+esc(s.url.replace(/^https?:\\/\\//,""))+'</span></a>').join("")||"<small>Je hebt nog nergens toegang toe.</small>";
 });
 </script>`;
 
 const GEEN_TOEGANG = (g, d) => `<main><div class="kaart">
   <h1>Geen toegang</h1>
-  <p>Je bent ingelogd als <b>${esc(g.naam)}</b>, maar je hebt geen toegang tot <b>${esc(d.site.naam)}</b>. Vraag Paul om je toegang te geven.</p>
+  <p>Je bent ingelogd als <b>${esc(g.naam)}</b>, maar je hebt geen toegang tot <b>${esc(d.site.naam)}</b>.</p>
   <a href="${esc(d.account)}/"><button class="vol" type="button">Naar mijn sites</button></a>
   <p style="margin:14px 0 0;font-size:13px"><a href="${esc(d.account)}/uitloggen" style="color:#6b6b68">Inloggen met een ander account</a></p>
 </div></main>`;

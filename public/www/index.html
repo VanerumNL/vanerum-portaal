@@ -125,7 +125,6 @@ footer .adres{margin-left:auto}
           <div class="veld"><label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required></div>
           <button class="knop" id="knop">Inloggen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
           <div class="fout" id="fout" role="alert"></div>
-          <p class="klein">Wachtwoord vergeten of nog geen account? Vraag het Paul.</p>
         </form>
 
         <!-- ingelogd -->
@@ -201,7 +200,7 @@ footer .adres{margin-left:auto}
     $("tegels").innerHTML = (ik.sites || []).map(s => `<a class="tegel" href="${esc(s.url)}">
         <img src="/www/${ICOON[s.id] || "favicon.png"}" alt="">
         <div><b>${esc(s.naam)}</b><span>${esc(s.url.replace(/^https?:\/\//, ""))}</span></div><div class="pijl">→</div></a>`).join("")
-      || `<p class="sub">Je hebt nog nergens toegang toe. Vraag Paul om je toe te voegen.</p>`;
+      || `<p class="sub">Je hebt nog nergens toegang toe.</p>`;
     $("links").innerHTML = (ik.admin ? `<a href="${ACCOUNT}/beheer">Beheer</a>` : "") + `<a href="${ACCOUNT}/wachtwoord">Wachtwoord wijzigen</a><a href="/uitloggen">Uitloggen</a>`;
     $("inlog").hidden = true; $("binnen").hidden = false;
     return voornaam;
