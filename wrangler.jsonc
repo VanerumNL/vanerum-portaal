@@ -6,6 +6,12 @@
   "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
   // workers.dev aan, om het portaal te testen voordat de adressen zijn overgezet
   "workers_dev": true,
+  "routes": [
+    { "pattern": "account.vanerumnederland.nl", "custom_domain": true },
+    { "pattern": "www.vanerumnederland.nl", "custom_domain": true },
+    // het kale domein stuurt door naar www
+    { "pattern": "vanerumnederland.nl", "custom_domain": true }
+  ],
   // Alle accounts staan in Supabase (zelfde project als de Offertes-site). Dit zijn openbare gegevens.
   // De secret key staat NIET hier maar als geheim SUPABASE_SECRET bij deze Worker in Cloudflare.
   "vars": {
