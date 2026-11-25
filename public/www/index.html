@@ -108,6 +108,33 @@ footer .adres{margin-left:auto}
   .kaart{padding:22px}
   footer .adres{margin-left:0}
 }
+/* Vimo loopt uit beeld */
+.podium.loopt svg{transform:translateX(calc(var(--weg,1) * 115vw));transition:transform 1.5s cubic-bezier(.55,0,.85,.45)}
+.podium.loopt .wrap{animation:stap .36s ease-in-out infinite}
+@keyframes stap{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+/* ingelogd: groot wit vlak met alle tools */
+.held-grid.binnen{grid-template-columns:minmax(0,1fr);grid-template-areas:none;justify-items:center;align-items:center;padding:clamp(8px,4vh,56px) 0}
+.held-grid.binnen>div:first-child{display:block;width:100%;max-width:1080px}
+.binnen h1,.binnen .podium{display:none}
+.binnen #binnen{max-width:none;width:100%;padding:clamp(24px,4vw,48px)}
+.binnen #binnen.groei{animation:groei .7s cubic-bezier(.2,1.25,.4,1)}
+@keyframes groei{from{opacity:0;transform:translateY(24px) scale(.94)}}
+.binnen #hallo{font-size:clamp(30px,3.4vw,48px);line-height:1.1;margin-bottom:6px}
+.binnen #binnen .sub{font-size:17px;margin-bottom:22px}
+.binnen .tegels{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:22px}
+.binnen .tegel{flex-direction:column;align-items:flex-start;gap:14px;padding:22px;border-radius:18px;position:relative}
+.binnen .tegel img{width:72px;height:72px;border-radius:16px}
+.binnen .tegel b{font-size:19px;margin-bottom:4px}
+.binnen .tegel .pijl{position:absolute;right:20px;top:20px;font-size:24px}
+.binnen .tegel:hover{transform:translateY(-3px)}
+.binnen .links{font-size:15px}
+@media (max-width:700px){
+  .binnen .tegels{grid-template-columns:1fr;gap:10px}
+  .binnen .tegel{flex-direction:row;align-items:center;padding:14px}
+  .binnen .tegel img{width:56px;height:56px}
+  .binnen .tegel b{font-size:17px}
+  .binnen .tegel .pijl{position:static;margin-left:auto}
+}
 @media (max-height:760px){
   .balk{padding:16px 0}
   .kaart{padding:22px 24px}
@@ -379,23 +406,34 @@ footer .adres{margin-left:auto}
   addEventListener("resize", wegKant);
   setInterval(() => { if (stemming === "rust") RUST(); }, 1500);
   zet("rust");
-  setTimeout(() => zeg("Hoi! Ik ben Vimo."), 600);
+  setTimeout(() => { if (!$("inlog").hidden) zeg("Hoi! Ik ben Vimo."); }, 700);
 
   /* ---------- inloggen ---------- */
-  async function laad() {
-    let ik = null;
-    try { const r = await fetch("/api/ik", { cache: "no-store" }); if (r.ok) ik = await r.json(); } catch (e) {}
-    if (ik && ik.moetWijzigen) { location.href = ACCOUNT + "/wachtwoord?terug=" + encodeURIComponent(location.href); return; }
-    if (!ik) { $("inlog").hidden = false; $("binnen").hidden = true; return; }
-    const voornaam = String(ik.naam || "").split(" ")[0];
-    $("hallo").textContent = "Hallo " + voornaam;
+  async function haalIk() {
+    try { const r = await fetch("/api/ik", { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) {}
+    return null;
+  }
+  const voornaamVan = ik => String(ik.naam || "").split(" ")[0];
+  // het grote witte vlak met alle tools
+  function toon(ik, metAnimatie) {
+    $("hallo").textContent = "Hallo " + voornaamVan(ik);
     $("tegels").innerHTML = (ik.sites || []).map(s => `<a class="tegel" href="${esc(s.url)}">
         <img src="/www/${ICOON[s.id] || "favicon.png"}" alt="">
         <div><b>${esc(s.naam)}</b><span>${esc(s.url.replace(/^https?:\/\//, ""))}</span></div><div class="pijl">→</div></a>`).join("")
       || `<p class="sub">Je hebt nog nergens toegang toe.</p>`;
     $("links").innerHTML = (ik.admin ? `<a href="${ACCOUNT}/beheer">Beheer</a>` : "") + `<a href="${ACCOUNT}/wachtwoord">Wachtwoord wijzigen</a><a href="/uitloggen">Uitloggen</a>`;
     $("inlog").hidden = true; $("binnen").hidden = false;
-    return voornaam;
+    $("binnen").classList.toggle("groei", !!metAnimatie);
+    document.querySelector(".held-grid").classList.add("binnen");
+  }
+  // Vimo loopt huppelend uit beeld (weg van het inlogvak)
+  function loopWeg(klaar) {
+    ballon.classList.remove("zicht");
+    stemming = "loopt"; oog(1, [weg, 0]); mond("lach"); leun(weg * 6, weg * 8, 0);
+    let stap = 0; const zwaai = setInterval(() => { stap ^= 1; armen(stap ? [-60, 20] : [20, 10], stap ? [-20, -10] : [60, -20]); }, 180);
+    $("podium").style.setProperty("--weg", weg);
+    $("podium").classList.add("loopt");
+    setTimeout(() => { clearInterval(zwaai); klaar(); }, 1500);
   }
 
   $("inlog").addEventListener("submit", async e => {
@@ -404,15 +442,26 @@ footer .adres{margin-left:auto}
       const r = await fetch("/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value, wachtwoord: $("ww").value }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.fout || "Inloggen lukt niet");
-      const naam = await laad();
-      if (naam) { zet("blij"); zeg("Welkom, " + naam + "!", 3500); setTimeout(() => zet("rust"), 1800); }
+      const ik = await haalIk();
+      if (!ik) throw new Error("Inloggen lukt niet");
+      if (ik.moetWijzigen) { location.href = ACCOUNT + "/wachtwoord?terug=" + encodeURIComponent(location.href); return; }
+      // nog een keer springen, de naam zeggen, uit beeld lopen, dan het grote vlak met de tools
+      $("ww").blur(); $("email").blur();
+      zet("blij"); zeg("Welkom, " + voornaamVan(ik) + "!", 2200);
+      setTimeout(() => loopWeg(() => toon(ik, true)), 2100);
+      return;
     } catch (x) {
-      $("fout").textContent = x.message; zet("sip"); zeg("Oei... dat klopt niet. Nog een keer?", 2800); setTimeout(() => { if (stemming === "sip") zet(document.activeElement === $("ww") ? "weg" : "rust"); }, 2600);
+      $("fout").textContent = x.message; zet("sip"); zeg("Oei... dat klopt niet. Nog een keer?", 2800);
+      setTimeout(() => { if (stemming === "sip") zet(document.activeElement === $("ww") ? "dicht" : "rust"); }, 2600);
     }
     $("knop").disabled = false;
   });
 
-  laad();
+  (async () => {
+    const ik = await haalIk();
+    if (ik && ik.moetWijzigen) { location.href = ACCOUNT + "/wachtwoord?terug=" + encodeURIComponent(location.href); return; }
+    if (ik) toon(ik, false); else $("inlog").hidden = false;
+  })();
 })();
 </script>
 </body>
