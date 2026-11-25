@@ -41,7 +41,8 @@ export default {
     if (!env.SUPABASE_URL || !env.SUPABASE_SECRET || !env.SUPABASE_PUBLISHABLE) return pagina("storing", null, {}, 503);
     if (host === DOMEIN) return redirect("https://www." + DOMEIN + c.pad + url.search);
     if (host === "www." + DOMEIN) return wwwHost(c);
-    if (host === ACCOUNT_HOST || host.startsWith("account.")) return accountHost(c);
+    // het workers.dev-adres gedraagt zich als account.vanerumnederland.nl (handig om te testen)
+    if (host === ACCOUNT_HOST || host.startsWith("account.") || host.endsWith(".workers.dev")) return accountHost(c);
     return new Response("Onbekend adres", { status: 404 });
   },
 };
