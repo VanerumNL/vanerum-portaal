@@ -409,6 +409,8 @@ footer .adres{margin-left:auto}
   setTimeout(() => { if (!$("inlog").hidden) zeg("Hoi! Ik ben Vimo."); }, 700);
 
   /* ---------- inloggen ---------- */
+  // iPhone maakt van ' en " soms gekrulde tekens (slimme leestekens); terugzetten
+  const recht = w => w.replace(/[\u2018\u2019\u201A\u2032]/g, "'").replace(/[\u201C\u201D\u201E\u2033]/g, '"');
   async function haalIk() {
     try { const r = await fetch("/api/ik", { cache: "no-store" }); if (r.ok) return await r.json(); } catch (e) {}
     return null;
@@ -439,7 +441,7 @@ footer .adres{margin-left:auto}
   $("inlog").addEventListener("submit", async e => {
     e.preventDefault(); $("knop").disabled = true; $("fout").textContent = "";
     try {
-      const r = await fetch("/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value, wachtwoord: $("ww").value }) });
+      const r = await fetch("/login", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: $("email").value.trim(), wachtwoord: recht($("ww").value) }) });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(j.fout || "Inloggen lukt niet");
       const ik = await haalIk();

@@ -73,11 +73,12 @@ const LOGIN = (d) => `<main><form class="kaart" id="f">
   <div class="fout" id="fout"></div>
 </form></main>
 <script>
+const recht=w=>w.replace(/[\u2018\u2019\u201A\u2032]/g,"'").replace(/[\u201C\u201D\u201E\u2033]/g,'"');
 const terug=${JSON.stringify(d.terug || "")};
 f.addEventListener("submit",async e=>{
   e.preventDefault();knop.disabled=true;fout.textContent="";
   try{
-    const r=await fetch("/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email:email.value,wachtwoord:ww.value,terug})});
+    const r=await fetch("/login",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({email:email.value.trim(),wachtwoord:recht(ww.value),terug})});
     const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.fout||"Inloggen lukt niet");
     location.href=j.naar||"/";
   }catch(x){fout.textContent=x.message;knop.disabled=false}
@@ -94,12 +95,13 @@ const WACHTWOORD = (g, d) => `<main><form class="kaart" id="f">
   <button class="vol" id="knop">Opslaan</button><div class="fout" id="fout"></div>
 </form></main>
 <script>
+const recht=w=>w.replace(/[\u2018\u2019\u201A\u2032]/g,"'").replace(/[\u201C\u201D\u201E\u2033]/g,'"');
 const terug=${JSON.stringify(d.terug || "")};
 f.addEventListener("submit",async e=>{
   e.preventDefault();fout.textContent="";if(n1.value!==n2.value){fout.textContent="De twee nieuwe wachtwoorden zijn niet hetzelfde";return}
   knop.disabled=true;
   try{
-    const r=await fetch("/wachtwoord",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({oud:oud.value,nieuw:n1.value,terug})});
+    const r=await fetch("/wachtwoord",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({oud:recht(oud.value),nieuw:recht(n1.value),terug})});
     const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.fout||"Opslaan lukt niet");
     location.href=j.naar||"/";
   }catch(x){fout.textContent=x.message;knop.disabled=false}
