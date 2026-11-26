@@ -67,8 +67,8 @@ export function pagina(soort, g, data = {}, status = 200) {
 const LOGIN = (d) => `<main><form class="kaart" id="f">
   <h1>Inloggen</h1>
   <p>Log in met je Vanerum-mailadres en je wachtwoord. Met één account kom je op alle Vanerum-tools waar je toegang toe hebt.</p>
-  <label for="email">E-mailadres</label><input id="email" type="email" autocomplete="username" autofocus required>
-  <label for="ww">Wachtwoord</label><input id="ww" type="password" autocomplete="current-password" required>
+  <label for="email">E-mailadres</label><input id="email" type="email" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="username" autofocus required>
+  <label for="ww">Wachtwoord</label><input id="ww" type="password" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="current-password" required>
   <button class="vol" id="knop">Inloggen</button>
   <div class="fout" id="fout"></div>
 </form></main>
@@ -88,9 +88,9 @@ const WACHTWOORD = (g, d) => `<main><form class="kaart" id="f">
   <h1>${g.moetWijzigen ? "Kies je eigen wachtwoord" : "Wachtwoord wijzigen"}</h1>
   <p>${g.moetWijzigen ? "Je bent ingelogd met een tijdelijk wachtwoord. Kies nu een eigen wachtwoord van minstens 8 tekens." : "Kies een nieuw wachtwoord van minstens 8 tekens."}</p>
   <input type="email" autocomplete="username" value="${esc(g.email)}" hidden>
-  <label for="oud">${g.moetWijzigen ? "Tijdelijk wachtwoord" : "Huidig wachtwoord"}</label><input id="oud" type="password" autocomplete="current-password" required autofocus>
-  <label for="n1">Nieuw wachtwoord</label><input id="n1" type="password" autocomplete="new-password" minlength="8" required>
-  <label for="n2">Nieuw wachtwoord (nog een keer)</label><input id="n2" type="password" autocomplete="new-password" minlength="8" required>
+  <label for="oud">${g.moetWijzigen ? "Tijdelijk wachtwoord" : "Huidig wachtwoord"}</label><input id="oud" type="password" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="current-password" required autofocus>
+  <label for="n1">Nieuw wachtwoord</label><input id="n1" type="password" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="new-password" minlength="8" required>
+  <label for="n2">Nieuw wachtwoord (nog een keer)</label><input id="n2" type="password" autocapitalize="none" autocorrect="off" spellcheck="false" autocomplete="new-password" minlength="8" required>
   <button class="vol" id="knop">Opslaan</button><div class="fout" id="fout"></div>
 </form></main>
 <script>
