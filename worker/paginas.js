@@ -42,7 +42,7 @@ small{color:#6b6b68}
 function kop(g, nu) {
   if (!g) return `<div class="kop"><img src="/img/logo-geel-wit.png" alt="Vanerum"></div>`;
   const a = (href, t, k) => `<a href="${href}"${nu === k ? ' class="nu"' : ""}>${t}</a>`;
-  return `<div class="kop"><img src="/img/logo-geel-wit.png" alt="Vanerum"><div class="r">${a("/", "Mijn sites", "sites")}${
+  return `<div class="kop"><img src="/img/logo-geel-wit.png" alt="Vanerum"><div class="r">${a("https://www.vanerumnederland.nl/", "Mijn sites", "sites")}${
     g.admin ? a("/beheer", "Beheer", "beheer") : ""
   }${a("/wachtwoord", "Wachtwoord", "wachtwoord")}<a href="/uitloggen">Uitloggen</a></div></div>`;
 }

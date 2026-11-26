@@ -63,7 +63,8 @@ async function accountHost(c) {
   if (pad === "/api/supabase-sessie") return supabaseSessie(c, g);
   if (g.moetWijzigen && navigatie) return redirect("/wachtwoord" + (c.url.search || ""));
 
-  if (pad === "/") return pagina("sites", g);
+  // "Mijn sites" is het overzicht met Vimo op www.vanerumnederland.nl
+  if (pad === "/") return c.env.TEST || c.host.endsWith(".workers.dev") ? pagina("sites", g) : redirect("https://www." + DOMEIN + "/");
   if (pad === "/api/ik") {
     const sites = (await alleSites(env)).filter((s) => magNaar(g, s));
     return json({ email: g.email, naam: g.naam, admin: g.admin, sites });
